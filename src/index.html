@@ -4,18 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="CSS/main.scss">
-    <title>Document</title>
-    <script src="JS/main.js" type="module"></script>
+    <title>Typescript</title>
+    <script src="JS/main.ts" type="module"></script>
 </head>
 <body>
     <header>
-
+        <h1>Mina kurser</h1>
     </header>
     <main>
-        <h1>Parcelmallens första sida</h1>
+        <div id="addCourse">
+            <h2>Lägg till ny kurs</h2>
+            <form id="courseForm">
+                <label for="courseName">Kursnamn: </label><br>
+                <input type="text" id="courseName">
+                <br>
+                <label for="courseCode">Kurskod: </label><br>
+                <input type="text" id="courseCode">
+                <br>
+                <label for="url">URL: </label><br>
+                <input type="text" id="url">
+                <br>
+                <label for="prog">Progression: </label>
+                <select name="progression" id="prog">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                </select>
+                <br> <br>
+                <input type="submit" value="Lägg till kurs" id="submit">
+            </form>
+        </div>
+        <div id="courses">
+            <ul id="courseList"></ul>
+        </div>
     </main>
     <footer>
-
+        <p>Anne-Lii Hansen</p>
     </footer>    
 </body>
 </html>
