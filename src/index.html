@@ -16,27 +16,31 @@
             <h2>Lägg till ny kurs</h2>
             <form id="courseForm">
                 <label for="courseName">Kursnamn: </label><br>
-                <input type="text" id="courseName">
+                <input type="text" id="courseName" required>
                 <br>
                 <label for="courseCode">Kurskod: </label><br>
-                <input type="text" id="courseCode">
+                <input type="text" id="courseCode" required>
                 <br>
                 <label for="url">URL: </label><br>
                 <input type="text" id="url">
                 <br>
                 <label for="prog">Progression: </label>
-                <select name="progression" id="prog">
+                <select name="progression" id="prog" required>
                     <option value="A">A</option>
                     <option value="B">B</option>
                     <option value="C">C</option>
                 </select>
                 <br> <br>
                 <input type="submit" value="Lägg till kurs" id="submit">
+
+
             </form>
         </div>
         <div id="courses">
             <ul id="courseList"></ul>
+            <button id="clear">Ta bort alla kurser</button>
         </div>
+        
     </main>
     <footer>
         <p>Anne-Lii Hansen</p>
