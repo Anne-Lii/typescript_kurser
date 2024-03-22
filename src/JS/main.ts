@@ -30,7 +30,7 @@ window.addEventListener("load", () => {
     });
 });
 
-//funktion för att visa upp kurser
+//funktion för att skriva ut kurserna till webbsidan
 function displayCourse(course: courseInfo): void {
 
     if (courseList) {
@@ -85,6 +85,11 @@ if (deleteBtn) {
     });
 }
 
+// Validera att kurskoden är unik
+function isCodeUnique(code: string, courses: courseInfo[]): boolean {
+    return !courses.some(course => course.code === code);
+}
+
 //eventlistener vid klick på submitknappen
 courseForm.addEventListener('submit', function (event: Event) {
 
@@ -104,6 +109,13 @@ courseForm.addEventListener('submit', function (event: Event) {
         progression: progressionInput,
         url: urlInput
     };
+
+    //validera att kurskod är unik innan kursen läggs till på lista
+    const courses:courseInfo[] = getCourses();
+    if (!isCodeUnique(newCourse.code, courses)) {
+        alert("Kurskoden måste vara unik");
+        return;
+    }
 
     displayCourse(newCourse);//anropar funktionen att lägg till kursen i kurslista
     saveCourseToLocalStorage(newCourse);//anropar funktionen för att spara kursen i localstorage
@@ -164,6 +176,13 @@ function editCourse(course: courseInfo): void {
 
             // Hämta befintliga kurser, uppdatera den valda kursen och spara till localStorage
             const courses: courseInfo[] = getCourses();
+
+            //validera att kurskoden är unik innan kursen uppdateras
+            if (!isCodeUnique(course.code, courses.filter(c=> c.code !== courseCode))) {
+                alert("Kurskoden måste vara unik");
+                return;
+            }
+
             const updatedCourses = courses.map(c => c.code === courseCode ? course : c);
             saveCourses(updatedCourses);
 
