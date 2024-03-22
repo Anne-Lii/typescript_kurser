@@ -39,15 +39,24 @@ function displayCourse(course: courseInfo): void {
         const listItem: HTMLLIElement = document.createElement('li');
 
         // Vad som ska skrivas ut i det nya <li> elementet
+        listItem.id = `course-${course.code}`;
         listItem.innerHTML += `
         <strong>${course.code}</strong> - <strong >${course.name}</strong> <br>
         Progression:${course.progression} <br>
          <a href="${course.url}">${course.url}</a>
-         
+         <button class="edit">Redigera</button>
         `;
 
         // Lägg till det nya <li> elementet till <ul> listan
         courseList.appendChild(listItem);
+
+         // Eventlyssnare för klick på redigeringsknappen
+         const editBtn: HTMLButtonElement | null = listItem.querySelector('.edit');
+         if (editBtn) {
+             editBtn.addEventListener('click', () => {
+                 editCourse(course);
+             });
+         }
     }
 }
 
@@ -106,4 +115,63 @@ function saveCourseToLocalStorage(course: courseInfo): void {
     const courses: courseInfo[] = getCourses();
     courses.push(course);
     saveCourses(courses);
+}
+
+// Funktion som körs vid klick på redigeringsknappen
+function editCourse(course: courseInfo): void {
+
+    //tar bort eventuella redigeringsformulär
+    const existingEditForm = document.getElementById("editCourseForm");
+    if(existingEditForm) {
+        existingEditForm.remove();
+    }
+
+    // Skapar ett nytt formulär för redigering
+    const editForm = document.createElement('form');
+    editForm.id = `editCourseForm-${course.code}`;  // Lägger till ett id till forumläret
+    editForm.innerHTML = `
+    <input type="text" id="editCourseCode" class="editinput" placeholder="Kurskod" value="${course.code}">
+        <input type="text" id="editCourseName" class="editinput" "placeholder="Kursnamn" value="${course.name}">
+        <input type="url" id="editUrl" class="editinput" placeholder="URL" value="${course.url}">
+        <select id="editProg" class="editinput">
+            <option value="A" ${course.progression === 'A' ? 'selected' : ''}>A</option>
+            <option value="B" ${course.progression === 'B' ? 'selected' : ''}>B</option>
+            <option value="C" ${course.progression === 'C' ? 'selected' : ''}>C</option>
+        </select>
+        <button type="submit" id="updateBtn">Uppdatera</button>
+    `;
+
+    // Sätter ett data-attribut med kurskoden
+    editForm.setAttribute('data-course-code', course.code);
+    
+    // Lägg till formuläret under den valda kursen
+    const selectedCourseElement = document.getElementById(`course-${course.code}`);
+    if (selectedCourseElement) {
+        selectedCourseElement.appendChild(editForm);
+        
+        // Lägg till eventlyssnare för formuläret
+        editForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            
+            // Hämta data-attributet för kurskoden
+            const courseCode = editForm.getAttribute('data-course-code');
+
+            // Uppdatera den valda kursens information
+            course.name = (document.getElementById('editCourseName') as HTMLInputElement).value;
+            course.code = (document.getElementById('editCourseCode') as HTMLInputElement).value;
+            course.url = (document.getElementById('editUrl') as HTMLInputElement).value;
+            course.progression = (document.getElementById('editProg') as HTMLSelectElement).value;
+
+            // Hämta befintliga kurser, uppdatera den valda kursen och spara till localStorage
+            const courses: courseInfo[] = getCourses();
+            const updatedCourses = courses.map(c => c.code === courseCode ? course : c);
+            saveCourses(updatedCourses);
+
+            // Uppdatera kurslistan på webbsidan
+            updateCourseList(updatedCourses);
+            
+            // Ta bort redigeringsformuläret
+            editForm.remove();
+        });
+    }
 }

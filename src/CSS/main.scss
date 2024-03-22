@@ -1,4 +1,4 @@
-@import "animation"; 
+@import "animation";
 
 * {
     padding: 0;
@@ -11,74 +11,100 @@ header {
     height: 150px;
     background-color: cadetblue;
 }
+
 h1 {
     font-size: 42px;
     text-align: center;
     padding-top: 50px;
 }
 
+// formuläret för att lägga till ny kurs
 #addCourse {
     width: 60%;
     margin: 0 auto;
     height: auto;
-    
     margin-top: 50px;
 }
+
 h2 {
     padding: 10px 0 10 20px;
     font-size: 28px;
 }
+
 label {
     font-size: 24px;
 }
+
 form {
     padding: 0 0 0 20px;
 }
+
 input {
     width: 50%;
-    height: 30px;
-    border-bottom: 2px solid #000;  
+    height: 30px;  
     transition: width 0.4s ease-in-out;
 }
+
 input:focus {
     width: 90%;
 }
+
 select {
     height: 30px;
 }
+
 #submit {
     max-width: 200px;
     height: 40px;
     background-color: cadetblue;
     margin: 20px 0;
     font-size: 20px;
-   
 }
+
 #submit:hover {
     cursor: pointer;
     box-shadow: 3 3 5px;
 }
+
+//lista på sidan med inlaggda kurser
 #courses {
-    width: 80%;
+    width: 60%;
     margin: 0 auto;
     height: auto;
- 
 }
+
 #courses ul {
     list-style: none;
     padding: 10px;
 }
+
 #courses ul li {
-   padding: 15px 0;
-   border-bottom: 2px solid #000;
+    padding: 10px;
+    border-bottom: 2px solid #000;
 }
 
-.deleteBtn {
-display: flexbox;
-float: right;
-padding: 5px;
+//redigeringsknapp
+.edit {
+    float: right;
+    max-width: 200px;
+    height: 25px;
+    font-size: 20px;
+    padding: 2px 10px;
 }
 
+//redigeringsformulär
+.editinput {
+    width: 50%;
+    height: 30px;  
+    transition: width 0.4s ease-in-out;
+}
+
+#updateBtn {
+    float: right;
+    padding: 5px;
+    background-color: cadetblue;
+}
+//ta bort alla kurser-knappen
 #clear {
     max-width: 200px;
     height: 40px;
@@ -93,6 +119,7 @@ padding: 5px;
     box-shadow: 3 3 5px;
 }
 
+//footer
 footer {
     width: 100%;
     margin: 0 auto;
@@ -101,6 +128,7 @@ footer {
     bottom: 0;
     background-color: cadetblue;
 }
+
 footer p {
     text-align: center;
     padding-top: 30px;
