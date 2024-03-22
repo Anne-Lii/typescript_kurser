@@ -3,21 +3,18 @@
 const courseList: HTMLElement | null = document.getElementById('courseList');
 const courseForm: HTMLFormElement | null = document.getElementById('courseForm') as HTMLFormElement;
 
+//Interface som definierar strukturen för ett nytt kursobjekt
 interface courseInfo {
-    name: string;
     code: string;
-    url: string;
+    name: string;
     progression: string;
+    url: string;
 }
 
 //funktion som hämtar kurser från local storage
 function getCourses(): courseInfo[] {
     const courseJSON: string | null = localStorage.getItem("courses");
-    if (courseJSON) {
-        return JSON.parse(courseJSON);
-    } else {
-        return []
-    }
+    return courseJSON ? JSON.parse(courseJSON) : [];
 }
 
 //funktion som sparar kurser till localstorage
@@ -30,7 +27,7 @@ window.addEventListener("load", () => {
     const courses: courseInfo[] = getCourses();
     courses.forEach(course => {
         displayCourse(course);
-    })
+    });
 });
 
 //funktion för att visa upp kurser
@@ -43,42 +40,43 @@ function displayCourse(course: courseInfo): void {
 
         // Vad som ska skrivas ut i det nya <li> elementet
         listItem.innerHTML += `
-        <strong contenteditable>${course.code}</strong> - <strong contenteditable>${course.name}</strong> <br>
-        Progression: <span contenteditable>${course.progression}</span contenteditable> <br>
-         <a href="${course.url}" contenteditable>${course.url}</a>
+        <strong>${course.code}</strong> - <strong >${course.name}</strong> <br>
+        Progression:${course.progression} <br>
+         <a href="${course.url}">${course.url}</a>
+         
         `;
 
         // Lägg till det nya <li> elementet till <ul> listan
         courseList.appendChild(listItem);
-
-        const editBtn: HTMLButtonElement | null = listItem.querySelector(".edit");
-        if (editBtn) {
-        editBtn.addEventListener("click", () => {
-           
-        });
-        }
     }
-}
-
-function deleteCourse(course:courseInfo): void {
-    const courses: courseInfo[] = getCourses();
-    const updateCourses: courseInfo[] = courses.filter (c => c.code!== course.code);
-    saveCourses(updateCourses)
-
-    // Uppdatera kurserna på sidan om den aktuella kursen tas bort
-    updateCourseList(updateCourses);
 }
 
 // Funktion för att uppdatera listan med kurser på sidan
 function updateCourseList(courses: courseInfo[]): void {
+
+    saveCourses(courses); // sparar kurserna till localstorage
+
     if (courseList) {
-        courseList.innerHTML = ""; // Rensa befintlig kurslista
-        courses.forEach(course => {
+        courseList.innerHTML = ""; // Rensa befintlig kurslista på webbsidan
+        courses.forEach(course => {//loopar igenom och visar alla befintliga kurser på websidan
             displayCourse(course);
         });
     }
 }
 
+//rensar listan på sidan och localstorage vid klick på knappen "Ta bort alla kurser"
+const deleteBtn: HTMLButtonElement | null = document.getElementById("clear") as HTMLButtonElement | null;
+
+if (deleteBtn) {
+    deleteBtn.addEventListener("click", () => {
+        if (courseList) {
+            courseList.innerHTML = "";
+        }
+        saveCourses([]); // rensar localStorage        
+    });
+}
+
+//eventlistener vid klick på submitknappen
 courseForm.addEventListener('submit', function (event: Event) {
 
     // Förhindra standardbeteendet för formuläret att skicka data och ladda om sidan
@@ -90,6 +88,7 @@ courseForm.addEventListener('submit', function (event: Event) {
     const urlInput: string = (document.getElementById('url') as HTMLInputElement).value;
     const progressionInput: string = (document.getElementById('prog') as HTMLSelectElement).value;
 
+    // Skapa ett nytt kursobjekt med hjälp av "courseInfo" interfacet
     const newCourse: courseInfo = {
         code: codeInput,
         name: nameInput,
@@ -102,44 +101,9 @@ courseForm.addEventListener('submit', function (event: Event) {
     courseForm.reset();//nollställ formuläret
 });
 
-//funktionen för att spara kursen i storage
-function saveCourseToLocalStorage(course: courseInfo): void{
-    const coursesInStorage:string | null = localStorage.getItem("courses");
-    let courses: courseInfo[] = [];
-
-    if (coursesInStorage) {
-        try {
-            courses = JSON.parse(coursesInStorage);
-        } catch (error) {
-            console.error();
-        }
-    }
-
+// Funktion för att spara kursen i localStorage
+function saveCourseToLocalStorage(course: courseInfo): void {
+    const courses: courseInfo[] = getCourses();
     courses.push(course);
-    localStorage.setItem("courses", JSON.stringify(courses));
+    saveCourses(courses);
 }
-//funktion som körs när ändringar görs vid input
-document.addEventListener("input", function(event) {
-    const edited = event.target;
-
-    // Kontrollera om det redigerbara elementet har ett data-key-attribut
-    const dataKey = edited.getAttribute('data-key');
-    if (dataKey) {
-        // Spara det uppdaterade innehållet i localStorage
-        localStorage.setItem(dataKey, edited.innerHTML);
-    }
-});
-
-// Ladda in sparade data från localStorage när sidan laddas
-window.addEventListener('load', function() {
-    // Hämta alla redigerbara element
-    const editableElements = document.querySelectorAll('[contenteditable]');
-    
-    // Gå igenom varje redigerbart element och hämta dess sparade värde från localStorage
-    editableElements.forEach(function(element) {
-        const savedValue = localStorage.getItem(element.getAttribute('data-key'));
-        if (savedValue) {
-            element.innerHTML = savedValue;
-        }
-    });
-});
