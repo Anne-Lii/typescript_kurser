@@ -1,6 +1,6 @@
 
 // Hämtar element från HTML-koden
-const courseList: HTMLElement | null = document.getElementById('courseList');
+const courseList: HTMLElement | null = document.getElementById('courseList') as HTMLUListElement;
 const courseForm: HTMLFormElement | null = document.getElementById('courseForm') as HTMLFormElement;
 const resetBtn: HTMLButtonElement | null = document.getElementById('reset') as HTMLButtonElement | null;
 
@@ -51,13 +51,13 @@ function displayCourse(course: courseInfo): void {
         // Lägger till det nya <li> elementet till <ul> listan
         courseList.appendChild(listItem);
 
-         // Eventlyssnare för klick på redigeringsknappen
-         const editBtn: HTMLButtonElement | null = listItem.querySelector('.edit');
-         if (editBtn) {
-             editBtn.addEventListener('click', () => {
-                 editCourse(course);
-             });
-         }
+        // Eventlyssnare för klick på redigeringsknappen
+        const editBtn: HTMLButtonElement | null = listItem.querySelector('.edit');
+        if (editBtn) {
+            editBtn.addEventListener('click', () => {
+                editCourse(course);
+            });
+        }
     }
 }
 
@@ -112,7 +112,7 @@ courseForm.addEventListener('submit', function (event: Event) {
     };
 
     //kontrollerar att kurskoden är unik innan kursen läggs till på listan
-    const courses:courseInfo[] = getCourses();
+    const courses: courseInfo[] = getCourses();
     if (!isCodeUnique(newCourse.code, courses)) {
         alert("Kurskoden måste vara unik");
         return;
@@ -133,16 +133,17 @@ function saveCourseToLocalStorage(course: courseInfo): void {
 
 // Funktion som körs vid klick på redigeringsknappen
 function editCourse(course: courseInfo): void {
-    // Tar bort eventuella redigeringsformulär för samma kurs
+
+    // Om ett redigerinsformulär för denna kurskod redan finns så tas det bort.
     const existingEditForm = document.getElementById(`editCourseForm-${course.code}`);
-    if(existingEditForm) {
+    if (existingEditForm) {
         existingEditForm.remove();
     }
 
     // Skapar ett nytt formulär för redigering
     const editForm = document.createElement('form');
-    editForm.id = `editCourseForm-${course.code}`;
-    editForm.setAttribute('data-course-code', course.code); // Sätt data-attributet för kurskoden
+    editForm.id = `editCourseForm-${course.code}`;//ger formuläret ett id
+    editForm.setAttribute('data-course-code', course.code); // Sätter data-attributet kurskod på formuläret
     editForm.innerHTML = `
         <input type="text" id="editCourseCode" class="editinput" placeholder="Kurskod" value="${course.code}">
         <input type="text" id="editCourseName" class="editinput" placeholder="Kursnamn" value="${course.name}">
@@ -159,7 +160,7 @@ function editCourse(course: courseInfo): void {
     const selectedCourseElement = document.getElementById(`course-${course.code}`);
     if (selectedCourseElement) {
         selectedCourseElement.appendChild(editForm);
-        
+
         // Lägger till eventlyssnare för formuläret
         editForm.addEventListener('submit', (event) => {
             event.preventDefault();
@@ -175,17 +176,19 @@ function editCourse(course: courseInfo): void {
             // Hämtar befintliga kurser, uppdaterar den valda kursen och sparar till localStorage
             let courses: courseInfo[] = getCourses();
 
+            //kontroll om kurskoden är unik annars kommer varning
             if (!isCodeUnique(updatedCourse.code, courses.filter(c => c.code !== course.code))) {
                 alert("Kurskoden måste vara unik");
                 return;
             }
 
+            //kollar nya kursen och jämför kurskoden, om den nya kurskoden matchar ersätts den gamla med den uppdaterade kursen annars behålls den gamla
             courses = courses.map(c => c.code === course.code ? updatedCourse : c);
             saveCourses(courses);
 
             // Uppdaterar kurslistan på webbsidan
             updateCourseList(courses);
-            
+
             // Tar bort redigeringsformuläret
             editForm.remove();
         });
